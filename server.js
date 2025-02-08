@@ -68,30 +68,30 @@
 //   console.log(`Server running at http://${hostname}:${port}/`);
 // });
 
-const http = require('http');
-const fs = require('fs');
-const { url } = require('inspector');
-const hostname = '127.0.0.1';
-const port = 3000;
+// const http = require('http');
+// const fs = require('fs');
+// const { url } = require('inspector');
+// const hostname = '127.0.0.1';
+// const port = 3000;
 
-const server = http.createServer((req, res) => {
+// const server = http.createServer((req, res) => {
 
-  let filePath = '';
-  if(req.url === '/' || req.url === '/overview'){
-    filePath = '../templates/overview.html';
-  }
-  else if(req.url==='/product'){
-    filePath = '../templates/product.html';
-  }
-  fs.readFile(filePath,'utf8', (err, data)=>{
-    if(err){
-      res.statusCode = 500;
-      res.end('error');
-    }
-    res.statusCode = 200;
-    res.setHeader('Content-Type','utf8', 'text/html');
-    res.end(data);
-  })
+//   let filePath = '';
+//   if(req.url === '/' || req.url === '/overview'){
+//     filePath = '../templates/overview.html';
+//   }
+//   else if(req.url==='/product'){
+//     filePath = '../templates/product.html';
+//   }
+//   fs.readFile(filePath,'utf8', (err, data)=>{
+//     if(err){
+//       res.statusCode = 500;
+//       res.end('error');
+//     }
+//     res.statusCode = 200;
+//     res.setHeader('Content-Type','utf8', 'text/html');
+//     res.end(data);
+//   })
  
 //   const filePath = '../dev-data/data.json'; // Đảm bảo đường dẫn chính xác đến file JSON
 
@@ -134,8 +134,63 @@ const server = http.createServer((req, res) => {
 //       res.end(JSON.stringify({ error: 'Route not found' }));
 //     }
 //   });
- });
+//  });
+
+// server.listen(port, hostname, () => {
+//   console.log(`Server running at http://${hostname}:${port}/`);
+// });
+const { createServer } = require('node:http');
+
+const hostname = '127.0.0.1';
+const port = 3000;
+const fs = require('fs');
+
+const server = createServer((req, res) => {
+  
+  
+  
+  if(req.url === '/'){
+    res.end('<h1>hello<h1>');
+  }
+  else if(req.url === '/overview'){
+
+  }
+  else if(req.url === '/product'){
+
+  }
+  else if(req.url.startsWith("/api")){
+    
+    // let data = JSON.parse(fs.readFileSync('../dev-data/data.json'));
+    // res.setHeader('Content-Type', 'aplication/json');
+    // res.end(JSON.stringify(data));
+    //Tach nho url theo dau gach
+    console.log(req.url.split("/"));
+    let urlArr = req.url.split("/");
+    if(urlArr.length === 2){
+      let data = JSON.parse(fs.readFileSync('./dev-data/data.json'));
+      res.setHeader('Content-Type', 'aplication/json');
+      res.end(JSON.stringify(data));
+      
+    }   
+    else{
+      let id = urlArr[urlArr.length-1];
+      let data = JSON.parse(fs.readFileSync('./dev-data/data.json'));
+      let productData = data.find(function(e,i){
+        return e.id === +id;
+      })
+      res.end(JSON.stringify(productData));
+      
+    }
+  }
+  else{
+
+  }
+  
+});
 
 server.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
 });
+
+
+
